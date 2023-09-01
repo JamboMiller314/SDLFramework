@@ -33,7 +33,7 @@ Player::Player() {
 	mScore = 0;
 	mLives = 2;
 	
-	mShip = new Texture("PlayerShips.png", 0, 0, 60, 64);
+	mShip = new Texture("ship.png", 0, 0, 42, 26);
 	mShip->Parent(this);
 	mShip->Position(Vec2_Zero);
 
@@ -129,5 +129,5 @@ void Player::Render() {
 		}
 	}
 
-	PhysEntity::Render();
+	//PhysEntity::Render();
 }
