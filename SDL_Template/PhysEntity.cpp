@@ -30,11 +30,7 @@ bool PhysEntity::IgnoreCollisions() {
 	return false;
 }
 
-PhysEntity::PhysEntity() {
-	mBroadPhaseCollider = nullptr;
-	mTag = "";
-	mId = 0;
-}
+
 
 PhysEntity::~PhysEntity() {
 	for (auto c : mColliders) {

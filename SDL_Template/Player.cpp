@@ -2,6 +2,7 @@
 #include "BoxCollider.h"
 #include "PhysicsManager.h"
 
+
 void Player::HandleMovement() {
 	if (mInput->KeyDown(SDL_SCANCODE_RIGHT)) {
 		Translate(Vec2_Right * mMoveSpeed * mTimer->DeltaTime(), World);
@@ -28,7 +29,7 @@ Player::Player() {
 
 	mVisible = true;
 	mAnimating = false;
-	mWasHit = false;
+	mWasHit = true;
 
 	mScore = 0;
 	mLives = 2;
@@ -45,11 +46,16 @@ Player::Player() {
 	mDeathAnimation->Position(Vec2_Zero);
 	mDeathAnimation->SetWrapMode(AnimatedTexture::Once);
 
+	for (int i = 0; i < MAX_BULLETS; ++i) {
+		mBullets[i] = new Bullet(true,"bullet.png", 500.0f);
+	}
 	AddCollider(new BoxCollider(Vector2(16.0f, 67.0f)));
 	AddCollider(new BoxCollider(Vector2(20.0f, 37.0f)), Vector2( 18.0f, 10.0f));
 	AddCollider(new BoxCollider(Vector2(20.0f, 37.0f)), Vector2(-18.0f, 10.0f));
 
 	mId = PhysicsManager::Instance()->RegisterEntity(this, PhysicsManager::CollisionLayers::Friendly);
+	mBullet = new Bullet(true, "bullet.png", 500.0f);
+
 }
 
 Player::~Player() {
@@ -63,6 +69,18 @@ Player::~Player() {
 	delete mDeathAnimation;
 	mDeathAnimation = nullptr;
 
+}
+
+void Player::HandleFiring() {
+	if (mInput->KeyPressed(SDL_SCANCODE_SPACE)) {
+		for (int i = 0; i < MAX_BULLETS; ++i) {
+			if (!mBullets[i]->Active()) {
+				mBullets[i]->Fire(Position());
+				mAudio->PlaySFX("SFX/shoot.wav");
+				break;
+			}
+		}
+	}
 }
 
 void Player::Visible(bool visible) {
@@ -115,7 +133,11 @@ void Player::Update() {
 	else {
 		if (Active()) {
 			HandleMovement();
+			HandleFiring();
 		}
+	}
+	for (int i = 0; i < MAX_BULLETS; ++i) {
+		mBullets[i]->Update();
 	}
 }
 
@@ -127,6 +149,9 @@ void Player::Render() {
 		else {
 			mShip->Render();
 		}
+	}
+	for (int i = 0; i < MAX_BULLETS; ++i) {
+		mBullets[i]->Render();
 	}
 
 	//PhysEntity::Render();

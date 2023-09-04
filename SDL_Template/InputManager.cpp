@@ -57,6 +57,7 @@ namespace SDLFramework {
 
 		switch (button) {
 		case Left:
+
 			mask = SDL_BUTTON_LMASK;
 			break;
 		case Right:

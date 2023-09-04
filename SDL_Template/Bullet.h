@@ -2,6 +2,8 @@
 #define __BULLET_H
 #include "PhysEntity.h"
 #include "Timer.h"
+#include "BoxCollider.h"
+#include "PhysicsManager.h"
 
 using namespace SDLFramework;
 
@@ -20,7 +22,7 @@ private:
 	bool IgnoreCollisions() override;
 
 public:
-	Bullet(bool friendly);
+	Bullet(bool friendly, const std::string& texturePath, float speed);
 	~Bullet();
 
 	void Fire(Vector2 pos);

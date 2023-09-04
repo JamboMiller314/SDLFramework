@@ -37,23 +37,47 @@ void PhysicsManager::UnregisterEntity(unsigned long id) {
 		}
 	}
 }
-
 void PhysicsManager::Update() {
-	for (unsigned int i = 0; i < static_cast<unsigned int>(CollisionLayers::MaxLayers); i++) {
-		for (unsigned int j = 0; j < static_cast<unsigned int>(CollisionLayers::MaxLayers); j++) {
-			if (mLayerMasks[i].test(j) && i <= j) {
-				for (unsigned int k = 0; k < mCollisionLayers[i].size(); k++) {
-					for (unsigned int l = 0; l < mCollisionLayers[j].size(); l++) {
-						if (mCollisionLayers[i][k]->CheckCollision(mCollisionLayers[j][l])) {
-							mCollisionLayers[i][k]->Hit(mCollisionLayers[j][l]);
-							mCollisionLayers[j][l]->Hit(mCollisionLayers[i][k]);
-						}
-					}
-				}
-			}
-		}
-	}
+    for (unsigned int i = 0; i < static_cast<unsigned int>(CollisionLayers::MaxLayers); i++) {
+        for (unsigned int j = 0; j < static_cast<unsigned int>(CollisionLayers::MaxLayers); j++) {
+            if (mLayerMasks[i].test(j) && i <= j) {
+                auto& layer1 = mCollisionLayers[i];
+                auto& layer2 = mCollisionLayers[j];
+                auto it1 = layer1.begin();
+                while (it1 != layer1.end()) {
+                    auto it2 = layer2.begin();
+                    while (it2 != layer2.end()) {
+                        if ((*it1)->IsActive() && (*it2)->IsActive() &&
+                            (*it1)->CheckCollision(*it2)) {
+                            (*it1)->Hit(*it2);
+                            (*it2)->Hit(*it1);
+                        }
+
+                        // Remove destroyed entities from layer2
+                        if (!(*it2)->IsActive()) {
+                            delete* it2;
+                            it2 = layer2.erase(it2);
+                        }
+                        else {
+                            ++it2;
+                        }
+                    }
+
+                    // Remove destroyed entities from layer1
+                    if (!(*it1)->IsActive()) {
+                        delete* it1;
+                        it1 = layer1.erase(it1);
+                    }
+                    else {
+                        ++it1;
+                    }
+                }
+            }
+        }
+    }
 }
+
+
 
 PhysicsManager::PhysicsManager() {
 	mLastId = 0;

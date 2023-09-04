@@ -17,13 +17,26 @@ protected:
 	void AddCollider(Collider* collider, Vector2 localPos = Vec2_Zero);
 
 	virtual bool IgnoreCollisions();
+	bool isActive;
 
 public:
-	PhysEntity();
+	PhysEntity() : isActive(true)
+	{
+		mBroadPhaseCollider = nullptr;
+		mTag = "";
+		mId = 0;
+	}
 	virtual ~PhysEntity();
 
 	unsigned long GetId();
 
+	void Destroy() {
+		isActive = false;
+	}
+
+	bool IsActive() const {
+		return isActive;
+	}
 	bool CheckCollision(PhysEntity* other);
 
 	void SetTag(std::string tag);

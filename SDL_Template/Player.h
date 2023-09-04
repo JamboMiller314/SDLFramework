@@ -4,7 +4,7 @@
 #include "AudioManager.h"
 #include "InputManager.h"
 #include "PhysEntity.h"
-
+#include "Bullet.h"
 using namespace SDLFramework;
 
 class Player : public PhysEntity {
@@ -25,7 +25,9 @@ private:
 
 	float mMoveSpeed;
 	Vector2 mMoveBounds;
-
+	Bullet* mBullet;
+	static const int MAX_BULLETS = 2;
+	Bullet* mBullets[MAX_BULLETS];
 private:
 	void HandleMovement();
 
@@ -38,7 +40,7 @@ public:
 
 	int Score();
 	int Lives();
-
+	Bullet* GetBullet() { return mBullet; }
 	void AddScore(int change);
 
 	// Inherited from PhysEntity
@@ -46,7 +48,7 @@ public:
 	void Hit(PhysEntity * other) override;
 	
 	bool WasHit();
-
+	void HandleFiring();
 	void Update() override;
 	void Render() override;
 };

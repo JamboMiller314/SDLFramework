@@ -178,7 +178,7 @@ void StartScreen::Update() {
 }
 
 void StartScreen::Render() {
-	mBackground->Render();
+	//mBackground->Render();
 	mPlayerOne->Render();
 	mPlayerTwo->Render();
 	mHiScore->Render();
